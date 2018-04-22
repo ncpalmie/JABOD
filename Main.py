@@ -12,9 +12,11 @@ async def on_message(message):
     member = message.author
     guild = member.server
     if member.name == 'crizm' and 'make teams' in message.content:
-        team_list = pickTeams(guild.members)
+        if message.content[len(message.content) - 1].isnumeric():
+            team_list = pickTeams(guild.members, int(message.content[len(message.content) - 1]))
+        else:
+            team_list = pickTeams(guild.members)
         team_string = toString('teams', team_list)
-        print(team_list[0])
         await client.send_message(message.channel, 'Teams made')
         for string in team_string:
             await client.send_message(message.channel, string)

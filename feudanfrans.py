@@ -4,7 +4,6 @@ def pickTeams(member_list, team_number=2):
     members_not_picked = []
     for value in member_list:
         members_not_picked.append(value)
-    print(len(members_not_picked))
     member_list_size = len(member_list)
     members_per_team = member_list_size // team_number
     team_array = []
@@ -20,7 +19,7 @@ def pickTeams(member_list, team_number=2):
         team = []
         for extra_array in team_list:
             for member in extra_array:
-                if member.status == 'online':
+                #if member.status == 'online':
                     team.append(member)
         return_array.append(team)
     return return_array
