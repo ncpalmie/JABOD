@@ -9,30 +9,24 @@ client = discord.Client()
 
 @client.event
 async def on_message(message):
-    # we do not want the bot to reply to itself
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('!hello'):
-        msg = 'Hello {0.author.mention}'.format(message)
-        await client.send_message(message.channel, msg)
-
-@client.event
-async def on_message(message):
     member = message.author
-    if member.name == 'crizm' and message.content.startswith('ay'):
+    guild = member.server
+    if member.name == 'crizm' and 'make teams' in message.content:
+        team_list = pickTeams(guild.members)
+        team_string = toString('teams', team_list)
+        print(team_list[0])
+        await client.send_message(message.channel, 'Teams made')
+        for string in team_string:
+            await client.send_message(message.channel, string)
+    elif member.name == 'crizm' and 'leave' in message.content:
         await client.send_message(message.channel, 'Goodbye')
         await client.close()
-        
+
 @client.event
-async def on_message(message):
-    member = message.author
-    guild = member.guild
-    if member.name == 'crizm' and 'make teams' in message.content:
-        pickTeams(guild.members)
-        await client.send_message('Teams made')
-
-
+async def on_member_remove(member):
+    if member.name == 'Khryonex':
+        await client.send_message(member.channel, 'Oh good, the talking cheese is gone')
+    
 @client.event
 async def on_ready():
     print('Logged in as')
