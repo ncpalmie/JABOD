@@ -23,11 +23,17 @@ async def on_message(message):
     elif member.name == 'crizm' and 'leave' in message.content:
         await client.send_message(message.channel, 'Goodbye')
         await client.close()
+        
+@client.event
+async def on_voice_state_update(member, voice_state):
+    if member.name == "crizm":
+        await client.close()
+    
 
 @client.event
 async def on_member_remove(member):
     if member.name == 'Khryonex':
-        await client.send_message(member.channel, 'Oh good, the talking cheese is gone')
+        await client.send_message(member.server, 'Oh good, the talking cheese is gone')
     
 @client.event
 async def on_ready():

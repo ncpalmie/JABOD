@@ -1,28 +1,27 @@
 import random
+import math
 
 def pickTeams(member_list, team_number=2):
     members_not_picked = []
-    for value in member_list:
-        members_not_picked.append(value)
-    member_list_size = len(member_list)
-    members_per_team = member_list_size // team_number
-    team_array = []
     return_array = []
-    for i in range(0, team_number):
-        new_team = []
-        for m in range(0, members_per_team):
-            mem_index = random.randint(0, len(members_not_picked) - 1)
-            new_team.append(members_not_picked[mem_index])
-            members_not_picked.pop(mem_index)
-        team_array.append([new_team])
-    for team_list in team_array:
-        team = []
-        for extra_array in team_list:
-            for member in extra_array:
-                #if member.status == 'online':
-                    team.append(member)
-        return_array.append(team)
+    for member in member_list:
+        if str(member.status) == 'online' and not member.bot:
+            members_not_picked.append(member)
+    for x in range(0, team_number):
+        return_array.append([])
+    num_per_team = math.ceil(len(members_not_picked) / team_number)
+    while len(members_not_picked) > 0 and not allTeamsFull(return_array, num_per_team):
+        team_index = random.randint(0, len(return_array) - 1)
+        if len(return_array[team_index]) < num_per_team:
+            return_array[team_index].append(members_not_picked[0])
+            members_not_picked.pop(0)
     return return_array
+    
+def allTeamsFull(team_list, num_per_team):
+     for team in team_list:
+        if len(team) < num_per_team:
+            return False
+     return True
     
 def toString(label, optional=None):
     if label == 'teams':
