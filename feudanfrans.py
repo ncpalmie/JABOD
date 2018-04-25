@@ -1,7 +1,9 @@
 import random
 import math
 
-def pickTeams(member_list, team_number=2):
+def pickTeams(member_list, message_request):
+    if message_request[len(message_request) - 1].isnumeric():
+        team_number = int(message_request[len(message_request) - 1])
     members_not_picked = []
     return_array = []
     for member in member_list:
@@ -15,7 +17,8 @@ def pickTeams(member_list, team_number=2):
         if len(return_array[team_index]) < num_per_team:
             return_array[team_index].append(members_not_picked[0])
             members_not_picked.pop(0)
-    return return_array
+    str_array = toString('teams', return_array)
+    return str_array
     
 def allTeamsFull(team_list, num_per_team):
      for team in team_list:
@@ -69,7 +72,11 @@ def parseTextFile(filename):
             print(temp_arr)
         if len(temp_arr) > 0:    
             q_and_a_sets.append(temp_arr)
-    print(q_and_a_sets)
+    return q_and_a_sets
+    
+
+    
+
     
     
     
