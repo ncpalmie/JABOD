@@ -38,6 +38,12 @@ def toString(label, optional=None):
             str_array.append(team_string)
             index += 1
         return str_array
+    elif label == 'q_and_a':
+        q_and_a_arr = optional 
+        return_str = '__**' + q_and_a_arr[0] + '**__'
+        for answer in q_and_a_arr[1]:
+            return_str += answer
+        return return_str
         
 def parseTextFile(filename):
     #Reads a file of the below format and places prompts and answers into matching spots in seperate arrays
@@ -55,8 +61,7 @@ def parseTextFile(filename):
     feud_file = open(filename, 'r')
     feud_text = feud_file.readlines()
     q_and_a_sets = []
-    for line in feud_text:
-        feud_text[feud_text.index(line)] = line.rstrip()
+    q_and_a_strings = []
     for index in range(0, len(feud_text)):
         temp_arr = []
         if feud_text[index][0] == '!':
@@ -72,7 +77,9 @@ def parseTextFile(filename):
             print(temp_arr)
         if len(temp_arr) > 0:    
             q_and_a_sets.append(temp_arr)
-    return q_and_a_sets
+    for q_and_a in q_and_a_sets:
+        q_and_a_strings.append(toString('q_and_a', q_and_a))
+    return [q_and_a_sets, q_and_a_strings]
     
 
     

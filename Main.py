@@ -20,7 +20,8 @@ async def on_message(message):
         await client.send_message(message.channel, 'Goodbye')
         await client.close()
     elif member.name == 'crizm' and 'parse prompt' in message.content:
-        parseTextFile('qanda.txt')
+        for string in parseTextFile('qanda.txt')[1]:
+            await client.send_message(message.channel, string)
         
 @client.event
 async def on_voice_state_update(member, voice_state):
