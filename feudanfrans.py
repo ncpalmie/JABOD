@@ -4,6 +4,8 @@ import math
 def pickTeams(member_list, message_request):
     if message_request[len(message_request) - 1].isnumeric():
         team_number = int(message_request[len(message_request) - 1])
+    else:
+        team_number = 2
     members_not_picked = []
     return_array = []
     for member in member_list:
