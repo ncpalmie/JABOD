@@ -35,7 +35,7 @@ def toString(label, optional=None):
         for team in optional:
             team_string = 'TEAM ' + str(index) + ': '
             for member in team:
-                team_string += member.name + ', '
+                team_string += member.name.lower() + ', '
             team_string = team_string[0:len(team_string) - 2]
             str_array.append(team_string)
             index += 1
