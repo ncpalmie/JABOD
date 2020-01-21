@@ -1,2 +1,2 @@
--sendMsg,Online
--bounce,60
+sendMsg,Online
+bounce,60
