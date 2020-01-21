@@ -1,13 +1,14 @@
 import discord
 from discord.ext import commands
-import debug, math, random, time, utility, asyncio
+import debug, games, math, random, time, utility, asyncio
 
-TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.XiZLbA.IG6HqAuHog6FFCYc3M7N3igPLb0'
+TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.XiZcEQ.AMzqtNhK1k8Xahmw7cOOBNxj3m8'
 client = discord.Client()
 
 #Setup commands to run
 command_file = open("debug_commands.txt", 'r')
 commands = command_file.readlines()
+command_file.close()
 
 #"Randomize" seed
 random.seed(math.floor(time.time()))
@@ -52,6 +53,15 @@ async def on_message(message):
                 await play_audio('scream.mp3', rand_voice_channel)
             else:
                 await channel.send("That member is not in a voice channel")
+        #Pictionary
+        elif 'pictionary' in command_args[0] and len(command_args) == 2:
+            if author.name == command_args[1]:
+                await channel.send("You cannot play pictionary against yourself")
+            else:
+                if utility.is_member_in_channel(client, command_args[1]):
+                    await games.pictionary(client, author.name, command_args[1])
+                else:
+                    await channel.send("That member is not in a voice channel")
 
 @client.event
 async def on_ready():
