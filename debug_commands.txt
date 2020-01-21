@@ -1,1 +1,2 @@
 -sendMsg,Online
+-bounce,60

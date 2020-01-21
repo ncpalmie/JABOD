@@ -1,28 +1,22 @@
 import discord
 from discord.ext import commands
-import debug
-import random
-import time
+import debug, math, random, time, utility
 
-TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.Db0_ig.xab3yTZvjt2LjoHvLTKUaYENP9g'
+TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.XiY9Lw.h8OOAe0kjuDMWmdZ_JaTTlPl2R0'
 client = discord.Client()
 
 #Setup commands to run
 command_file = open("debug_commands.txt", 'r')
 commands = command_file.readlines()
 
+#"Randomize" seed
+random.seed(math.floor(time.time()))
+
 @client.event
 async def execute_commands(client):
-    main_guild = None
-    main_channel = None
-    for guild in client.guilds:
-        if guild.name == "Something Sweeter":
-            main_guild = guild
-    for text_channel in main_guild.text_channels:
-        if text_channel.name == "general":
-            main_channel = text_channel
+    main_guild = utility.get_main_guild(client)
+    main_channel = utility.get_main_text_channel(main_guild)
     await debug.parse_commands(client, commands, main_channel)
-
 
 @client.event
 async def on_ready():
