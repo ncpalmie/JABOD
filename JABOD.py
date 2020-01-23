@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import debug, games, math, random, time, utility, asyncio
 
-TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.XiZcEQ.AMzqtNhK1k8Xahmw7cOOBNxj3m8'
+TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.XiZ2eA.qIQSPYGDdy9RkDtA6APnOB9F07M'
 client = discord.Client()
 
 #Setup commands to run

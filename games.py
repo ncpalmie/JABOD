@@ -79,7 +79,7 @@ async def pictionary(client, challenger_name, challenged_name):
         curr_round += 1
     if player1.score > player2.score:
         await main_channel.send("Player " + player1.member.name + " wins with " + str(player1.score) + " points!")
-    if player1.score == player2.score:
+    elif player1.score == player2.score:
         await main_channel.send("Players tie at " + str(player1.score) + " points!")
     else:
         await main_channel.send("Player " + player2.member.name + " wins with " + str(player1.score) + " points!")
