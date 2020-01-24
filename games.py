@@ -52,6 +52,7 @@ async def pictionary(client, challenger_name, challenged_name):
         await main_channel.send("Player " + player2.member.name + " has " + str(player2.score) + " points")
         await main_channel.send("Begin Guessing")
 
+        #Run round and begin outputting picture line by line
         picture_index = 0
         current_picture = ""
         picture = picture_list[random.randint(0, len(picture_list))]
@@ -61,6 +62,7 @@ async def pictionary(client, challenger_name, challenged_name):
             current_picture += picture.content[picture_index]
             await main_channel.send('==========================================================')
             await main_channel.send(current_picture)
+            #Check for messages which contain the correct response
             async for message in main_channel.history(limit=20):
                 if message.author == player1.member and message.content in valid_words:
                     await main_channel.send("Player " + player1.member.name + " got it! " + message.content)
@@ -77,11 +79,10 @@ async def pictionary(client, challenger_name, challenged_name):
         if not solved:
             await main_channel.send("No one got it! It's a " + valid_words[0])
         curr_round += 1
+    #Finish game and output score/winner
     if player1.score > player2.score:
         await main_channel.send("Player " + player1.member.name + " wins with " + str(player1.score) + " points!")
     elif player1.score == player2.score:
         await main_channel.send("Players tie at " + str(player1.score) + " points!")
     else:
         await main_channel.send("Player " + player2.member.name + " wins with " + str(player1.score) + " points!")
-
-
