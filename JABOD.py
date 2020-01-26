@@ -3,7 +3,11 @@ from discord.ext import commands
 import os, debug, games, math, random, time, utility, asyncio
 from os import path
 
-TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.XizvYw.UT8I7e_Sm2dVQAttfURpdEmGXlc'
+tkn_file = open("JABOD.token", "r")
+tkn = tkn_file.readline()
+tkn_file.close()
+
+TOKEN = tkn[0:-1]
 client = discord.Client()
 
 #Setup commands to run

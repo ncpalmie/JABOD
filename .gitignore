@@ -1,4 +1,5 @@
 __pycache__
+*.token
 google_temp
 .file
 ./sounds/*
