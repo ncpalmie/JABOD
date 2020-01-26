@@ -35,6 +35,13 @@ def get_random_voice_channel(client):
     main_guild = get_main_guild(client)
     return main_guild.voice_channels[random.randint(0, len(main_guild.voice_channels) - 1)]
 
+def get_voice_channel_by_name(client, name):
+    main_guild = get_main_guild(client)
+    for voice_channel in main_guild.voice_channels:
+        if voice_channel.name.lower() == name.lower():
+            return voice_channel
+    return None
+
 def get_main_guild(client):
     for guild in client.guilds:
         if guild.name == "Something Sweeter":

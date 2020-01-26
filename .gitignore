@@ -1,3 +1,6 @@
 __pycache__
+google_temp
+.file
+./sounds/*
 *.mp3
 *.wav

@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
-import debug, games, math, random, time, utility, asyncio
+import os, debug, games, math, random, time, utility, asyncio
+from os import path
 
-TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.XiZ2eA.qIQSPYGDdy9RkDtA6APnOB9F07M'
+TOKEN = 'NDM3MzY1MDY5MjI4Mjc3NzYy.XizvYw.UT8I7e_Sm2dVQAttfURpdEmGXlc'
 client = discord.Client()
 
 #Setup commands to run
@@ -13,13 +14,11 @@ command_file.close()
 #"Randomize" seed
 random.seed(math.floor(time.time()))
 
-@client.event
 async def execute_commands(client):
     main_guild = utility.get_main_guild(client)
     main_channel = utility.get_main_text_channel(main_guild)
     await debug.parse_commands(client, commands, main_channel)
 
-@client.event
 async def play_audio(audio_file_name, voice_channel):
     vc = await voice_channel.connect()
     vc.play(discord.FFmpegPCMAudio(audio_file_name))
@@ -70,5 +69,10 @@ async def on_ready():
     print(client.user.id)
     print('------')
     await execute_commands(client)
+    while True:
+        if path.exists("trigger.file"):
+            os.remove("trigger.file")
+            await play_audio("./sounds/depressing/existpain.mp3",
+             utility.get_voice_channel_by_name(client, "timeout"))
 
 client.run(TOKEN)
