@@ -58,13 +58,3 @@ def print_in_channel_member_names(client):
         for member in voice_channel.members:
             print(member.name)
 
-async def bounce_member(client, member_name, bounces):
-    member = None
-    if bounces > 10:
-        bounces = 10
-    if member_name == None:
-        member = get_random_channel_member(client)
-    else:
-        member = get_channel_member_by_name(client, member_name)
-    for i in range(0, bounces):
-        await member.edit(voice_channel=get_random_voice_channel(client))

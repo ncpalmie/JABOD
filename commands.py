@@ -86,3 +86,14 @@ async def pictionary(client, challenger_name, challenged_name):
         await main_channel.send("Players tie at " + str(player1.score) + " points!")
     else:
         await main_channel.send("Player " + player2.member.name + " wins with " + str(player1.score) + " points!")
+
+async def bounce_member(client, member_name, bounces):
+    member = None
+    if bounces > 10:
+        bounces = 10
+    if member_name == None:
+        member = get_random_channel_member(client)
+    else:
+        member = get_channel_member_by_name(client, member_name)
+    for i in range(0, bounces):
+        await member.edit(voice_channel=get_random_voice_channel(client))

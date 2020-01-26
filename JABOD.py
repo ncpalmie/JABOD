@@ -1,6 +1,5 @@
-import discord
+import os, discord, debug, commands, math, random, time, utility, asyncio
 from discord.ext import commands
-import os, debug, games, math, random, time, utility, asyncio
 from os import path
 
 tkn_file = open("JABOD.token", "r")
@@ -44,7 +43,7 @@ async def on_message(message):
         #Bounce
         if 'bounce' in command_args[0] and len(command_args) == 3:
             if utility.is_member_in_channel(client, command_args[1]):
-                await utility.bounce_member(client, command_args[1], int(command_args[2]))
+                await commands.bounce_member(client, command_args[1], int(command_args[2]))
             else:
                 await channel.send("That member is not in a voice channel")
         #Scream Chamber
@@ -62,7 +61,7 @@ async def on_message(message):
                 await channel.send("You cannot play pictionary against yourself")
             else:
                 if utility.is_member_in_channel(client, command_args[1]):
-                    await games.pictionary(client, author.name, command_args[1])
+                    await commands.pictionary(client, author.name, command_args[1])
                 else:
                     await channel.send("That member is not in a voice channel")
 
