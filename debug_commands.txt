@@ -1,2 +1,2 @@
 sendMsg,Online
-bounce,60
+scream, Crizm

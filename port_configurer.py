@@ -59,6 +59,15 @@ def reconfigure_port_connections(client):
     attempt_connect(client, sink_ports[0], alsa_ports[0])
     attempt_connect(client, sink_ports[1], alsa_ports[1])
 
+    #Check for record.py also recording
+    if len(alsa_ports) > 2:
+        attempt_disconnect(client, capture_ports[0], alsa_ports[2])
+        attempt_disconnect(client, capture_ports[1], alsa_ports[3])
+        attempt_connect(client, sink_ports[0], alsa_ports[2])
+        attempt_connect(client, sink_ports[1], alsa_ports[3])
+        
+
+
 def main(argv):
     client = jack.Client('JackClient')
     client.activate()

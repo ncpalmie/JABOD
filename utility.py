@@ -1,6 +1,33 @@
-import discord, random, asyncio
+import os, time, asyncio
+import jcmds
+import discord
+import random
 from discord.ext import commands
 
+class Watchdog:
+    def __init__(self, client):
+        self.client = client
+        self.main_text_channel = None
+        self.last_check_message = None
+        self.this_check_message = None
+    """Watches for specific changes in channel to
+    break loop and handle awaited events. Some events
+    may be checked less often than others due to lower
+    priority than voice control. Only events that can
+    have some effect on JABOD are currently watched."""
+    def watch(self):
+        if self.main_text_channel == None:
+            main_guild = get_main_guild(self.client)
+            self.main_text_channel = get_main_text_channel(main_guild)
+        self.this_check_message = self.main_text_channel.last_message
+        if self.this_check_message == None:
+            return False
+        if self.last_check_message == None or self.this_check_message.id != self.last_check_message.id:
+            self.last_check_message = self.this_check_message
+            return True
+        self.last_check_message = self.this_check_message
+        return False
+        
 def get_random_channel_member(client):
     member_pool = []
     voice_channels = get_main_guild(client).voice_channels
@@ -19,6 +46,14 @@ def get_channel_member_by_name(client, member_name):
             if member.name.lower() == member_name:
                 ret_member = member
     return ret_member
+
+def get_vc_with_member(client, member_name):
+    main_guild = get_main_guild(client)
+    for voice_channel in main_guild.voice_channels:
+        for member in voice_channel.members:
+            if member.name.lower() == member_name.lower():
+                return voice_channel
+    return None
 
 def is_member_in_channel(client, member_name, voice_channel=None):
     if voice_channel == None:
@@ -58,3 +93,17 @@ def print_in_channel_member_names(client):
         for member in voice_channel.members:
             print(member.name)
 
+def get_random_sound_in_folder(folder_name):
+    sounds_dir = "./sounds/" + folder_name + "/"
+    sounds = os.listdir(sounds_dir)
+    return sounds_dir + sounds[random.randint(0, len(sounds)-1)]
+
+async def parse_commands(client, commands, text_channel):
+    for command in commands:
+        command_args = command.split(',')
+        if "sendMsg" in command_args[0]:
+            await text_channel.send(command_args[1])
+        if "bounce" in command_args[0]:
+            await jcmds.bounce_member(client, None, int(command_args[1]))
+        if "play" in command_args[0]:
+            await text_channel.send("!play " + command_args[0][4:])

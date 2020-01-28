@@ -1,4 +1,7 @@
-import os, discord, debug, commands, math, random, time, utility, asyncio
+import os, sys, math, random, time, asyncio, subprocess
+import discord
+import jcmds
+import utility
 from discord.ext import commands
 from os import path
 
@@ -8,6 +11,7 @@ tkn_file.close()
 
 TOKEN = tkn[0:-1]
 client = discord.Client()
+voice_watchdog = utility.Watchdog(client)
 
 #Setup commands to run
 command_file = open("debug_commands.txt", 'r')
@@ -17,19 +21,43 @@ command_file.close()
 #"Randomize" seed
 random.seed(math.floor(time.time()))
 
-async def execute_commands(client):
+async def execute_commands(client, file_name):
     main_guild = utility.get_main_guild(client)
     main_channel = utility.get_main_text_channel(main_guild)
-    await debug.parse_commands(client, commands, main_channel)
+    command_file = open(file_name, 'r')
+    commands = command_file.readlines()
+    command_file.close()
+    await utility.parse_commands(client, commands, main_channel)
+
+async def voice_poll(client, voice_watchdog):
+    while True: #not voice_watchdog.watch():
+        if path.exists("trigger.file"):
+            os.remove("trigger.file")
+            #await play_audio(utility.get_random_sound_in_folder("depressing"),
+            # utility.get_vc_with_member(client, "crizm"))
+            vc = await utility.get_vc_with_member(client, "crizm").connect()
+            record = subprocess.Popen([sys.executable, "record.py"])
+            while record.poll() == None:
+                pass
+            translate = subprocess.Popen([sys.executable, "translate.py"])
+            while translate.poll() == None:
+                pass
+            if path.exists("voice_cmd.txt"):
+                await execute_commands(client, "voice_cmd.txt")
+                os.remove("voice_cmd.txt")
+            #await play_audio(utility.get_random_sound_in_folder("confirm"),
+            # utility.get_vc_with_member(client, "crizm"))
+            await asyncio.sleep(2)
+            await vc.disconnect()    
 
 async def play_audio(audio_file_name, voice_channel):
     vc = await voice_channel.connect()
-    vc.play(discord.FFmpegPCMAudio(audio_file_name))
-    while vc.is_playing():
-        await asyncio.sleep(1)
-    vc.stop()
-    await vc.disconnect()
-    
+    #vc.play(discord.FFmpegPCMAudio(audio_file_name))
+    #while vc.is_playing():
+    #    await asyncio.sleep(1)
+    #vc.stop()
+    await vc.disconnect()    
+
 @client.event
 async def on_message(message):
     author = message.author
@@ -43,27 +71,35 @@ async def on_message(message):
         #Bounce
         if 'bounce' in command_args[0] and len(command_args) == 3:
             if utility.is_member_in_channel(client, command_args[1]):
-                await commands.bounce_member(client, command_args[1], int(command_args[2]))
+                await jcmds.bounce_member(client, command_args[1], int(command_args[2]))
             else:
                 await channel.send("That member is not in a voice channel")
         #Scream Chamber
         elif 'scream' in command_args[0] and len(command_args) == 2:
             rand_voice_channel = utility.get_random_voice_channel(client)
+            main_guild = utility.get_main_guild(client)
+            channel = utility.get_main_text_channel(main_guild)
             if utility.is_member_in_channel(client, command_args[1]):
                 member = utility.get_channel_member_by_name(client, command_args[1])
                 await member.edit(voice_channel=rand_voice_channel)
-                await play_audio('scream.mp3', rand_voice_channel)
+                await play_audio('./sounds/confirm/okay.mp3', rand_voice_channel)
             else:
                 await channel.send("That member is not in a voice channel")
+        #Summon
+        elif 'summon' in command_args[0] and len(command_args) == 1:
+            #Add summon code    
+            pass
         #Pictionary
         elif 'pictionary' in command_args[0] and len(command_args) == 2:
             if author.name == command_args[1]:
                 await channel.send("You cannot play pictionary against yourself")
             else:
                 if utility.is_member_in_channel(client, command_args[1]):
-                    await commands.pictionary(client, author.name, command_args[1])
+                    await jcmds.pictionary(client, author.name, command_args[1])
                 else:
                     await channel.send("That member is not in a voice channel")
+    print('done')
+    await voice_poll(client, voice_watchdog)
 
 @client.event
 async def on_ready():
@@ -71,11 +107,6 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-    await execute_commands(client)
-    while True:
-        if path.exists("trigger.file"):
-            os.remove("trigger.file")
-            await play_audio("./sounds/depressing/existpain.mp3",
-             utility.get_voice_channel_by_name(client, "timeout"))
+    await execute_commands(client, "debug_commands.txt")
 
 client.run(TOKEN)
