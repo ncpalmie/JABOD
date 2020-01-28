@@ -1,4 +1,5 @@
 import discord, random, asyncio, utility
+import JABOD
 from discord.ext import commands
 
 class Player:
@@ -37,6 +38,17 @@ def setup_pictionary():
         ret_picture_list.append(new_picture)
     PictionaryPicture.picture_list = ret_picture_list
     return ret_picture_list
+
+async def chamber_member(client, member_name):
+    rand_voice_channel = utility.get_random_voice_channel(client)
+    main_guild = utility.get_main_guild(client)
+    channel = utility.get_main_text_channel(main_guild)
+    if utility.is_member_in_channel(client, member_name):
+        member = utility.get_channel_member_by_name(client, member_name)
+        await member.edit(voice_channel=rand_voice_channel)
+        await JABOD.play_audio('./sounds/confirm/okay.mp3', rand_voice_channel)
+    else:
+        await channel.send("That member is not in a voice channel")
 
 async def pictionary(client, challenger_name, challenged_name):
     picture_list = setup_pictionary()
@@ -92,8 +104,9 @@ async def bounce_member(client, member_name, bounces):
     if bounces > 10:
         bounces = 10
     if member_name == None:
-        member = get_random_channel_member(client)
+        member = utility.get_random_channel_member(client)
     else:
-        member = get_channel_member_by_name(client, member_name)
+        member = utility.get_channel_member_by_name(client, member_name)
     for i in range(0, bounces):
-        await member.edit(voice_channel=get_random_voice_channel(client))
+        await member.edit(voice_channel=utility.get_random_voice_channel(client))
+
