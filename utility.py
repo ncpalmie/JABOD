@@ -126,7 +126,7 @@ async def parse_commands(client, commands, text_channel):
             await jcmds.bounce_member(client, None, int(command_args[1]))
         if "play" in command_args[0]:
             mp3_file = get_mp3_file(get_video_link(command_args[0][4:]))
-            await play_vc_audio(client.voice_clients[0], mp3_file)
+            await play_vc_audio(client, mp3_file)
             os.remove(mp3_file)
 
 async def play_vc_audio(client, audio_file_name):
