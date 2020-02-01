@@ -71,6 +71,8 @@ async def on_voice_state_update(member, before, after):
         previous_time = time.time()
     else:
         if member == previous_member and time.time() - previous_time < 1:
+            previous_member = member
+            previous_time = time.time()
             vc = await utility.get_vc_with_member(client, "crizm").connect()
             await au.play_vc_audio(client, utility.get_random_sound("depressing"))
             record = subprocess.Popen([sys.executable, "record.py"])
