@@ -13,6 +13,8 @@ tkn_file.close()
 TOKEN = tkn[0:-1]
 client = discord.Client()
 voice_watchdog = utility.Watchdog(client)
+previous_member = None
+previous_time = None
 
 #Setup commands to run
 command_file = open("../debug_commands.txt", 'r')
@@ -52,7 +54,40 @@ async def voice_poll(client, voice_watchdog):
             await asyncio.sleep(2)
             await vc.disconnect()    
 
+#this should break stuff to show you this
+#erm
+#oh yeah
+#implement it so that double mute in short time pulls you
+#into individual channel to ask for your request
+#then spits you and JABOD back, try to be careful with the
+#vcs to stop whatever causes him to restart. this overall
+#should be just way better than voice, maybe even consider removing
+#voice but idk if they'd use it still yk
 
+@client.event
+async def on_voice_state_update(member, before, after):
+    if previous_time == None:
+        previous_member = member
+        previous_time = time.time()
+    else:
+        if member == previous_member and time.time() - previous_time < 1:
+            vc = await utility.get_vc_with_member(client, "crizm").connect()
+            await au.play_vc_audio(client, utility.get_random_sound("depressing"))
+            record = subprocess.Popen([sys.executable, "record.py"])
+            while record.poll() == None:
+                pass
+            record.kill()
+            translate = subprocess.Popen([sys.executable, "translate.py"])
+            while translate.poll() == None:
+                pass
+            translate.kill()
+            if path.exists("voice_cmd.txt"):
+                await execute_commands(client, "voice_cmd.txt")
+                os.remove("voice_cmd.txt")
+            await au.play_vc_audio(client, utility.get_random_sound("depressing"))
+            os.remove("speech.wav")
+            await asyncio.sleep(2)
+            await vc.disconnect()    
 
 @client.event
 async def on_message(message):
@@ -95,7 +130,7 @@ async def on_message(message):
                 else:
                     await channel.send("That member is not in a voice channel")
     print('done')
-    await voice_poll(client, voice_watchdog)
+#    await voice_poll(client, voice_watchdog)
 
 @client.event
 async def on_ready():
@@ -104,7 +139,7 @@ async def on_ready():
     print(client.user.id)
     print('------')
     await execute_commands(client, "../debug_commands.txt")
-    await voice_poll(client, voice_watchdog)
+    #await voice_poll(client, voice_watchdog)
     #REMOVE LATER
     #main_guild = utility.get_main_guild(client)
     #print(utility.get_main_text_channel(main_guild).last_message.content)
