@@ -1,2 +1,0 @@
-sendMsg,Online
-scream, Crizm

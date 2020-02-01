@@ -1,5 +1,4 @@
 import discord, random, asyncio, utility
-import JABOD
 from discord.ext import commands
 
 class Player:

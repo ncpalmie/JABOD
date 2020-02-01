@@ -5,7 +5,7 @@ import utility
 from discord.ext import commands
 from os import path
 
-tkn_file = open("JABOD.token", "r")
+tkn_file = open("./config/JABOD.token", "r")
 tkn = tkn_file.readline()
 tkn_file.close()
 
@@ -30,33 +30,35 @@ async def execute_commands(client, file_name):
     await utility.parse_commands(client, commands, main_channel)
 
 async def voice_poll(client, voice_watchdog):
-    while True: #not voice_watchdog.watch():
+    while True:#not voice_watchdog.watch():
         if path.exists("trigger.file"):
             os.remove("trigger.file")
-            #await play_audio(utility.get_random_sound_in_folder("depressing"),
-            # utility.get_vc_with_member(client, "crizm"))
             vc = await utility.get_vc_with_member(client, "crizm").connect()
+            await utility.play_vc_audio(client, utility.get_random_sound("depressing"))
             record = subprocess.Popen([sys.executable, "record.py"])
             while record.poll() == None:
                 pass
+            record.kill()
             translate = subprocess.Popen([sys.executable, "translate.py"])
             while translate.poll() == None:
                 pass
+            translate.kill()
             if path.exists("voice_cmd.txt"):
                 await execute_commands(client, "voice_cmd.txt")
                 os.remove("voice_cmd.txt")
-            #await play_audio(utility.get_random_sound_in_folder("confirm"),
-            # utility.get_vc_with_member(client, "crizm"))
+            await utility.play_vc_audio(client, utility.get_random_sound("depressing"))
+            os.remove("speech.wav")
             await asyncio.sleep(2)
             await vc.disconnect()    
 
 async def play_audio(audio_file_name, voice_channel):
     vc = await voice_channel.connect()
-    #vc.play(discord.FFmpegPCMAudio(audio_file_name))
-    #while vc.is_playing():
-    #    await asyncio.sleep(1)
-    #vc.stop()
+    vc.play(discord.FFmpegPCMAudio(audio_file_name))
+    while vc.is_playing():
+        await asyncio.sleep(1)
+    vc.stop()
     await vc.disconnect()    
+
 
 @client.event
 async def on_message(message):
@@ -108,5 +110,9 @@ async def on_ready():
     print(client.user.id)
     print('------')
     await execute_commands(client, "debug_commands.txt")
+    await voice_poll(client, voice_watchdog)
+    #REMOVE LATER
+    #main_guild = utility.get_main_guild(client)
+    #print(utility.get_main_text_channel(main_guild).last_message.content)
 
 client.run(TOKEN)

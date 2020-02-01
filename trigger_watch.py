@@ -21,7 +21,10 @@ while transcription != "quit":
     with mic as source:
         recognizer.adjust_for_ambient_noise(source)
         audio = recognizer.listen(source)
-    transcription = recognizer.recognize_sphinx(audio)
+    try:
+        transcription = recognizer.recognize_sphinx(audio)
+    except sr.UnknownValueError:
+        continue
     print(transcription)
     for word in transcription.split(" "):
         if word in valid_triggers:
