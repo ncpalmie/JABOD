@@ -2,10 +2,11 @@ import os, sys, math, random, time, asyncio, subprocess
 import discord
 import jcmds
 import utility
+import audio_util as au
 from discord.ext import commands
 from os import path
 
-tkn_file = open("./config/JABOD.token", "r")
+tkn_file = open("../config/JABOD.token", "r")
 tkn = tkn_file.readline()
 tkn_file.close()
 
@@ -14,7 +15,7 @@ client = discord.Client()
 voice_watchdog = utility.Watchdog(client)
 
 #Setup commands to run
-command_file = open("debug_commands.txt", 'r')
+command_file = open("../debug_commands.txt", 'r')
 commands = command_file.readlines()
 command_file.close()
 
@@ -34,7 +35,7 @@ async def voice_poll(client, voice_watchdog):
         if path.exists("trigger.file"):
             os.remove("trigger.file")
             vc = await utility.get_vc_with_member(client, "crizm").connect()
-            await utility.play_vc_audio(client, utility.get_random_sound("depressing"))
+            await au.play_vc_audio(client, utility.get_random_sound("depressing"))
             record = subprocess.Popen([sys.executable, "record.py"])
             while record.poll() == None:
                 pass
@@ -46,18 +47,11 @@ async def voice_poll(client, voice_watchdog):
             if path.exists("voice_cmd.txt"):
                 await execute_commands(client, "voice_cmd.txt")
                 os.remove("voice_cmd.txt")
-            await utility.play_vc_audio(client, utility.get_random_sound("depressing"))
+            await au.play_vc_audio(client, utility.get_random_sound("depressing"))
             os.remove("speech.wav")
             await asyncio.sleep(2)
             await vc.disconnect()    
 
-async def play_audio(audio_file_name, voice_channel):
-    vc = await voice_channel.connect()
-    vc.play(discord.FFmpegPCMAudio(audio_file_name))
-    while vc.is_playing():
-        await asyncio.sleep(1)
-    vc.stop()
-    await vc.disconnect()    
 
 
 @client.event
@@ -84,7 +78,7 @@ async def on_message(message):
             if utility.is_member_in_channel(client, command_args[1]):
                 member = utility.get_channel_member_by_name(client, command_args[1])
                 await member.edit(voice_channel=rand_voice_channel)
-                await play_audio('./sounds/confirm/okay.mp3', rand_voice_channel)
+                await au.play_audio('../sounds/confirm/okay.mp3', rand_voice_channel)
             else:
                 await channel.send("That member is not in a voice channel")
         #Summon
@@ -109,7 +103,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-    await execute_commands(client, "debug_commands.txt")
+    await execute_commands(client, "../debug_commands.txt")
     await voice_poll(client, voice_watchdog)
     #REMOVE LATER
     #main_guild = utility.get_main_guild(client)

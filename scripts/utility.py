@@ -112,11 +112,6 @@ def print_in_channel_member_names(client):
         for member in voice_channel.members:
             print(member.name)
 
-def get_random_sound(folder_name):
-    sounds_dir = "./sounds/" + folder_name + "/"
-    sounds = os.listdir(sounds_dir)
-    return sounds_dir + sounds[random.randint(0, len(sounds)-1)]
-
 async def parse_commands(client, commands, text_channel):
     for command in commands:
         command_args = command.split(',')
@@ -128,42 +123,3 @@ async def parse_commands(client, commands, text_channel):
             mp3_file = get_mp3_file(get_video_link(command_args[0][4:]))
             await play_vc_audio(client, mp3_file)
             os.remove(mp3_file)
-
-async def play_vc_audio(client, audio_file_name):
-    vc = client.voice_clients[0]
-    vc_stopped = False
-    vc.play(discord.FFmpegPCMAudio(audio_file_name))
-    while vc.is_playing() and not vc_stopped:
-        text_channel = get_main_text_channel(get_main_guild(client))
-        if text_channel.last_message != None and text_channel.last_message.content.lower() == "stop":
-            vc_stopped = True
-        await asyncio.sleep(1)
-    vc.stop()
-
-def get_video_link(video_name):
-    query = urllib.parse.quote(video_name)
-    search_url = "https://www.youtube.com/results?search_query=" + query
-    search_html = urllib.request.urlopen(search_url).read()
-    soup = BeautifulSoup(search_html, 'html.parser')
-    videos = soup.findAll(attrs={'class':'yt-uix-tile-link'})
-    if len(videos) > 0:
-        top_video = videos[0]
-    else:
-        print("Nothing found")
-    return "https://www.youtube.com" + top_video['href']
-        
-def get_mp3_file(video_link):
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([str(video_link)])
-    for _file in os.listdir():
-        if "mp3" in _file:
-            return _file
-    return None

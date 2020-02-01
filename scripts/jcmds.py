@@ -20,7 +20,7 @@ def setup_pictionary():
         return picture_list
     line_index = 0
     ret_picture_list = []
-    ascii_file = open('ascii_art.txt', 'r')
+    ascii_file = open('../config/ascii_art.txt', 'r')
     ascii_file_lines = ascii_file.readlines()
     ascii_file.close()
 
@@ -45,7 +45,7 @@ async def chamber_member(client, member_name):
     if utility.is_member_in_channel(client, member_name):
         member = utility.get_channel_member_by_name(client, member_name)
         await member.edit(voice_channel=rand_voice_channel)
-        await JABOD.play_audio('./sounds/confirm/okay.mp3', rand_voice_channel)
+        await JABOD.play_audio('../sounds/confirm/okay.mp3', rand_voice_channel)
     else:
         await channel.send("That member is not in a voice channel")
 
