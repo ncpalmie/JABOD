@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from discord.ext import commands
 from bs4 import BeautifulSoup
 import os, time, asyncio
+import audio_util as au
 import jcmds
 import discord
 import youtube_dl
@@ -9,6 +10,8 @@ import random
 import urllib.request
 
 class Watchdog:
+    previous_time = None
+    previous_member = None
     def __init__(self, client):
         self.client = client
         self.main_text_channel = None
@@ -120,6 +123,6 @@ async def parse_commands(client, commands, text_channel):
         if "bounce" in command_args[0]:
             await jcmds.bounce_member(client, None, int(command_args[1]))
         if "play" in command_args[0]:
-            mp3_file = get_mp3_file(get_video_link(command_args[0][4:]))
+            mp3_file = au.get_mp3_file(get_video_link(command_args[0][4:]))
             await play_vc_audio(client, mp3_file)
             os.remove(mp3_file)
